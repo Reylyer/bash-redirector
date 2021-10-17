@@ -98,6 +98,7 @@ do
 done
 
 # in loop
+IFS=$' '
 inotifywait -m -e ATTRIB `pwd` |
     while read dir operation file;
     do
@@ -139,14 +140,18 @@ inotifywait -m -e ATTRIB `pwd` |
             mv $file "./music"
             continue
         fi
+        containsElement "${file##*.}" "${powerpoints[@]}"
+        if [[ $? == 1 ]]; then
+            mv $file "./powerpoint"
+            continue
+        fi
+        echo "${file##*.}"
         if [[ "torrent" == "${file##*.}" ]]; then
             mv $file "./torrent"
         elif [[ "pdf" == "${file##*.}" ]]; then
             mv $file "./pdf"
         elif [[ "ovpn" == "${file##*.}" ]]; then
             mv $file "./ovpn"
-        elif [[ "pptx" == "${file##*.}" ]]; then
-            mv $file "./powerpoint"
         elif [[ "txt" == "${file##*.}" ]]; then
             mv $file "./plain text and script"
         fi
